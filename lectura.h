@@ -6,6 +6,6 @@
 // Salida: arreglo de celdas (estructura).
 // Descripción: Esta función tiene el propósito de leer el archivo de entrada
 // y retornar un array de celdas.
-Celda *leer_archivo(char *nombre_archivo);
+Celda *leer_archivo(FILE * archivo, int counter, int chucks);
 
 #endif

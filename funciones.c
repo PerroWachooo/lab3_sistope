@@ -3,6 +3,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include "celda.h"
+#include <pthread.h>
+#include "argumento.h"
+#include "lectura.h"
 
 // Entradas: int posicion_particula, int energia_particula, int posicion_arreglo,
 // int energia_arreglo int largo_arreglo
@@ -40,17 +43,37 @@ int o_proporcional(double energia_maxima, double energia_material)
     return (int)porcentaje_o;
 }
 
-void * trabajo_hebra(void * ){
+void * trabajo_hebra(void * estructura){
 
-
-    //while queden lineas por leer:
-
-        //Agregar semaforo para leer
-        //Crear  su propio arreglo de particulas (arreglar el leer)
-        // Celda *arreglo_ataque = leer_archivo(input_file);
-        // liberar semaofo para leer
-    /*  
+    Celda *arreglo_ataque = (Celda *)malloc(sizeof(Celda) * 100);
     
+    argumentos *args = (argumentos *)estructura;
+    pthread_mutex_t *semaforo_lectura = args -> read;
+    pthread_mutex_t *semaforo_escritura = args -> write;
+    double *arreglo_celdas_a_modifiar = args -> arreglo_celdas_a_modifiar;
+    FILE *file = args -> file;
+    int *contador = args -> contador;
+    int *chunks = args -> chunks;
+    int *N = args -> largo_celdas;
+
+
+    while ()
+    {
+        
+    
+    
+    // Insertar semaforo
+    pthread_mutex_lock(semaforo_lectura);
+
+    //Agregar semaforo para leer
+    arreglo_ataque= leer_archivo(file, *contador, *chunks);
+
+    *contador += *chunks;
+
+    pthread_mutex_unlock(semaforo_lectura);
+
+    
+    pthread_mutex_lock(semaforo_escritura);
     //Agregar semaforo para escribir
     // Se comienza a hacer se hace dos ciclos for se recorre todo el arreglo aplicandole la ecuación.
         // Se guarda el resultado en arreglo de posiciones.
@@ -58,19 +81,23 @@ void * trabajo_hebra(void * ){
         {
             for (int j = 0; j < N; j++)
             {
-                arreglo_posiciones[j] = suma_formula(arreglo_ataque[i].posicion, arreglo_ataque[i].valor, j, arreglo_posiciones[j], N);
+                arreglo_celdas_a_modifiar[j] = suma_formula(arreglo_ataque[i].posicion, arreglo_ataque[i].valor, j, arreglo_celdas_a_modifiar[j], N);
             }
         }
 
+    pthrea_mutex_unlock(semaforo_escritura);
     // liberar semaforo para escribir
     // Se cierra while
-    
-    //  pthread_exit(NULL);
- */
 
-
-
+    }
+    pthread_exit(NULL);
 }
+
+ 
+
+
+
+
 
 
 

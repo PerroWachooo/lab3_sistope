@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 #include "celda.h"
 
 // Entrada: nombre del archivo siendo un char.
 // Salida: arreglo de celdas (estructura).
 // Descripción: Esta función tiene el propósito de leer el archivo de entrada
 // y retornar un array de celdas.
-Celda *leer_archivo(FILE * archivo)
+Celda *leer_archivo(FILE * archivo, int counter, int chucks)
 {
     // Se inicializan las variables
     Celda *arreglo;
@@ -28,7 +29,7 @@ Celda *leer_archivo(FILE * archivo)
     int i = 0;
     int primer_numero;
     int segundo_numero;
-    while (fscanf(archivo, "%d %d", &primer_numero, &segundo_numero) != EOF && primer_numero)
+    while (fscanf(archivo, "%d %d", &primer_numero, &segundo_numero) != EOF && i < chucks)
     {
         if (primer_numero < 0 || segundo_numero <= 0)
         {
@@ -39,6 +40,7 @@ Celda *leer_archivo(FILE * archivo)
         arreglo[i].valor = segundo_numero;
         arreglo[i].largo_del_arreglo = tamaño_array;
         i++;
+        counter++;
     }
     return arreglo;
 }

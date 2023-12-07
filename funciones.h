@@ -14,5 +14,8 @@ double suma_formula(int posicion_particula, int energia_particula, int posicion_
 // 100% la energia maxima y la energia del material como el porcentaje de "o" que se
 // debe imprimir.
 
+void *trabajo_hebra(void *estructura);
 int o_proporcional(double energia_maxima, double energia_material);
+
+
 #endif

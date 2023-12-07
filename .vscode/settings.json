@@ -2,6 +2,8 @@
     "files.associations": {
         "celda.h": "c",
         "getopt.h": "c",
-        "wait.h": "c"
+        "wait.h": "c",
+        "stdio.h": "c",
+        "pthread.h": "c"
     }
 }

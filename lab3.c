@@ -7,6 +7,9 @@
 #include "lectura.h"
 #include <pthread.h>
 #include "salida.h"
+#include "funciones.h"
+#include "argumento.h"
+
 
 
 
@@ -22,7 +25,8 @@ int main(int argc, char *argv[])
     char *output_file = NULL;
     char *show = "0";
 
-    pthread_mutex_t esperar_hijas; // Los mutex se ocupan como variable global
+    pthread_mutex_t *lectura;
+    pthread_mutex_t *escritura;
 
     // Se utiliza get opt para extraer -N con el número de celdas
     // -i con el nombre del archivo de entrada, -o con el nombre del archivo de salida
@@ -145,15 +149,34 @@ int main(int argc, char *argv[])
 
     // Volver al inicio del archivo
     fseek(archivo, 0, SEEK_SET);
+    int contador = 0;
 
 
+    //Se crea el struct de argumentos para las hebras
+    argumentos *args = (argumentos *)malloc(sizeof(argumentos));
+    args->arreglo_celdas_a_modifiar = arreglo_posiciones;
+    args->read = lectura;
+    args->write = escritura;
+    args->contador = 0;
+    args->chunks = atoi(c);
+    args->file = archivo;
+    args->largo_celdas = atoi(N);
 
     //Creamos las hebras hijas 
     pthread_t hebras_hijas[atoi(N)];
         for(int i=0;i<atoi(N);i++){
-            pthread_create(&hebras_hijas[i], NULL, leer_archivo, (void*)NULL);
+            pthread_create(&hebras_hijas[i], NULL, trabajo_hebra, (void*)args);
         }
+   
+    //Ejecutamos las hebras hijas
+    for(int i=0;i<atoi(N);i++){
+        pthread_join(hebras_hijas[i], NULL);
+    }
+
     close(archivo);
+
+    //Se  imprime mensaje de termino
+    printf("Termino de ejecutarse las hebras\n");
 
 
 
