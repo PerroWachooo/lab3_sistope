@@ -17,5 +17,4 @@ double suma_formula(int posicion_particula, int energia_particula, int posicion_
 void *trabajo_hebra(void *estructura);
 int o_proporcional(double energia_maxima, double energia_material);
 
-
 #endif

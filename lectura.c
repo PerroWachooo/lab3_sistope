@@ -2,19 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include "globals.h"
 #include "celda.h"
-
-extern int final_archivo;
 
 // Entrada: nombre del archivo siendo un char.
 // Salida: arreglo de celdas (estructura).
 // Descripción: Esta función tiene el propósito de leer el archivo de entrada
 // y retornar un array de celdas.
-Celda *leer_archivo(FILE * archivo, int counter, int chucks)
+Celda *leer_archivo(FILE *archivo, int counter, int chucks)
 {
     // Se inicializan las variables
     Celda *arreglo;
-    
+
     // Se lee la primera linea
     char linea[100];
     int tamaño_array = atoi(fgets(linea, 100, archivo));
@@ -45,6 +44,11 @@ Celda *leer_archivo(FILE * archivo, int counter, int chucks)
         counter++;
     }
 
-    final_archivo = 1; //Se modifica la variable global a 1 indicando que se llego al final del archivo
+    // Si llegó al final del archivo
+    if (feof(archivo))
+    {
+        int final_archivo = 1;
+    }
+
     return arreglo;
 }
