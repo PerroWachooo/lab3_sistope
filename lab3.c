@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
     char *output_file = NULL;
     char *show = "0";
 
+    int final_archivo=0;//Indica si se llego al final del archivo, 0= no se ha llegado, 1= se llego
+
     pthread_mutex_t *lectura;
     pthread_mutex_t *escritura;
 

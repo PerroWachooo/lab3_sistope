@@ -7,6 +7,9 @@
 #include "argumento.h"
 #include "lectura.h"
 
+
+extern int final_archivo;
+
 // Entradas: int posicion_particula, int energia_particula, int posicion_arreglo,
 // int energia_arreglo int largo_arreglo
 // Salida: float que la energia que queda en la posicion del arreglo
@@ -57,9 +60,9 @@ void * trabajo_hebra(void * estructura){
     int *N = args -> largo_celdas;
 
 
-    while ()
+    while (final_archivo == 0)
     {
-        
+    
     
     
     // Insertar semaforo

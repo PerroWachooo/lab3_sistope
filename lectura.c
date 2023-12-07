@@ -4,6 +4,8 @@
 #include <pthread.h>
 #include "celda.h"
 
+extern int final_archivo;
+
 // Entrada: nombre del archivo siendo un char.
 // Salida: arreglo de celdas (estructura).
 // Descripción: Esta función tiene el propósito de leer el archivo de entrada
@@ -42,5 +44,7 @@ Celda *leer_archivo(FILE * archivo, int counter, int chucks)
         i++;
         counter++;
     }
+
+    final_archivo = 1; //Se modifica la variable global a 1 indicando que se llego al final del archivo
     return arreglo;
 }
