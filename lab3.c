@@ -10,14 +10,11 @@
 #include "funciones.h"
 #include "argumento.h"
 
-
-
-
 int main(int argc, char *argv[])
 {
     // Se declaran variables y se inicializan
     int option;
-    char *N = "0"; //Numero de celdas
+    char *N = "0"; // Numero de celdas
     char *H = "0"; // numero hebras a generar
     char *c = "0"; // numero de chunks
     char *p = "0";
@@ -25,7 +22,7 @@ int main(int argc, char *argv[])
     char *output_file = NULL;
     char *show = "0";
 
-    int final_archivo=0;//Indica si se llego al final del archivo, 0= no se ha llegado, 1= se llego
+    int final_archivo = 0; // Indica si se llego al final del archivo, 0= no se ha llegado, 1= se llego
 
     pthread_mutex_t *lectura;
     pthread_mutex_t *escritura;
@@ -49,9 +46,8 @@ int main(int argc, char *argv[])
             }
             break;
 
-        case 'P':
+        case 'H':
 
-            
             // Se guarda el número de Hebras a crear
             H = optarg;
             // Se verifica que P sea un numero entero
@@ -121,13 +117,10 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    // Se crea arreglo de celdas global
+    double *arreglo_posiciones = (double *)malloc(sizeof(double) * atoi(N));
 
-
-    //Se crea arreglo de celdas global
-    double *arreglo_posiciones = (double *)malloc(sizeof(double) *atoi(N));
-
-
-    //Se lee el archivo de entrada
+    // Se lee el archivo de entrada
     FILE *archivo = fopen(input_file, "r");
     if (archivo == NULL)
     {
@@ -153,8 +146,7 @@ int main(int argc, char *argv[])
     fseek(archivo, 0, SEEK_SET);
     int contador = 0;
 
-
-    //Se crea el struct de argumentos para las hebras
+    // Se crea el struct de argumentos para las hebras
     argumentos *args = (argumentos *)malloc(sizeof(argumentos));
     args->arreglo_celdas_a_modifiar = arreglo_posiciones;
     args->read = lectura;
@@ -164,48 +156,39 @@ int main(int argc, char *argv[])
     args->file = archivo;
     args->largo_celdas = atoi(N);
 
-    //Creamos las hebras hijas 
+    // Creamos las hebras hijas
     pthread_t hebras_hijas[atoi(N)];
-        for(int i=0;i<atoi(N);i++){
-            pthread_create(&hebras_hijas[i], NULL, trabajo_hebra, (void*)args);
-        }
-   
-    //Ejecutamos las hebras hijas
-    for(int i=0;i<atoi(N);i++){
+    for (int i = 0; i < atoi(N); i++)
+    {
+        pthread_create(&hebras_hijas[i], NULL, trabajo_hebra, (void *)args);
+    }
+
+    // Ejecutamos las hebras hijas
+    for (int i = 0; i < atoi(N); i++)
+    {
         pthread_join(hebras_hijas[i], NULL);
     }
 
-    close(archivo);
+    close(fileno(archivo));
 
-    //Se  imprime mensaje de termino
+    // Se  imprime mensaje de termino
     printf("Termino de ejecutarse las hebras\n");
 
-
-
-
     // Encuentra el valor maximo del arreglo_posiciones
-        double max = 0;
-        int posicion_max = 0;
-        for (int i = 0; i < atoi(N); i++)
+    double max = 0;
+    int posicion_max = 0;
+    for (int i = 0; i < atoi(N); i++)
+    {
+        if (arreglo_posiciones[i] > max)
         {
-            if (arreglo_posiciones[i] > max)
-            {
-                max = arreglo_posiciones[i];
-                posicion_max = i;
-            }
+            max = arreglo_posiciones[i];
+            posicion_max = i;
         }
-
+    }
 
     // Se escribe el archivo de salida
     escribir_archivo(output_file, arreglo_posiciones, atoi(N), posicion_max, max);
 
     // Se muestra el arreglo por consola
-    salida_consola(atoi(N), input_file, output_file, show, arreglo_posiciones, max);
-
-
+    salida_consola(atoi(N), input_file, output_file, atoi(show), arreglo_posiciones, max);
 }
-
-
-
-
-

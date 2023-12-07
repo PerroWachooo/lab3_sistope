@@ -5,16 +5,15 @@
 #include <stdio.h>
 
 // Estructura para los argumentos
-typedef struct {
+typedef struct
+{
     pthread_mutex_t *read;
     pthread_mutex_t *write;
     double *arreglo_celdas_a_modifiar;
     FILE *file;
-    int *contador;
-    int *chunks;
-    int *largo_celdas;
-    
-
+    int contador;
+    int chunks;
+    int largo_celdas;
 
 } argumentos;
 
