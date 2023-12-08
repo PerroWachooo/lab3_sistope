@@ -9,6 +9,7 @@
 #include "salida.h"
 #include "funciones.h"
 #include "argumento.h"
+#include "globals.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,10 +23,24 @@ int main(int argc, char *argv[])
     char *output_file = NULL;
     char *show = "0";
 
-    int final_archivo = 0; // Indica si se llego al final del archivo, 0= no se ha llegado, 1= se llego
-
     pthread_mutex_t *lectura;
     pthread_mutex_t *escritura;
+    lectura = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
+    escritura = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
+
+    // Verifica si la asignación de memoria fue exitosa
+    if (lectura == NULL || escritura == NULL)
+    {
+        printf("Error: No se pudo asignar memoria para los mutex\n");
+        exit(1);
+    }
+
+    // Inicializa los mutex
+    if (pthread_mutex_init(lectura, NULL) != 0 || pthread_mutex_init(escritura, NULL) != 0)
+    {
+        printf("Error: No se pudo inicializar uno o ambos mutex\n");
+        exit(1);
+    }
 
     // Se utiliza get opt para extraer -N con el número de celdas
     // -i con el nombre del archivo de entrada, -o con el nombre del archivo de salida
@@ -155,6 +170,7 @@ int main(int argc, char *argv[])
     args->chunks = atoi(c);
     args->file = archivo;
     args->largo_celdas = atoi(N);
+    final_archivo = 0; // Indica si se llego al final del archivo, 0= no se ha llegado, 1= se llego
 
     // Creamos las hebras hijas
     pthread_t hebras_hijas[atoi(N)];
@@ -174,21 +190,21 @@ int main(int argc, char *argv[])
     // Se  imprime mensaje de termino
     printf("Termino de ejecutarse las hebras\n");
 
-    // // Encuentra el valor maximo del arreglo_posiciones
-    // double max = 0;
-    // int posicion_max = 0;
-    // for (int i = 0; i < atoi(N); i++)
-    // {
-    //     if (arreglo_posiciones[i] > max)
-    //     {
-    //         max = arreglo_posiciones[i];
-    //         posicion_max = i;
-    //     }
-    // }
+    // Encuentra el valor maximo del arreglo_posiciones
+    double max = 0;
+    int posicion_max = 0;
+    for (int i = 0; i < atoi(N); i++)
+    {
+        if (arreglo_posiciones[i] > max)
+        {
+            max = arreglo_posiciones[i];
+            posicion_max = i;
+        }
+    }
 
-    // // Se escribe el archivo de salida
-    // escribir_archivo(output_file, arreglo_posiciones, atoi(N), posicion_max, max);
+    // Se escribe el archivo de salida
+    escribir_archivo(output_file, arreglo_posiciones, atoi(N), posicion_max, max);
 
-    // // Se muestra el arreglo por consola
-    // salida_consola(atoi(N), input_file, output_file, atoi(show), arreglo_posiciones, max);
+    // Se muestra el arreglo por consola
+    salida_consola(atoi(N), input_file, output_file, atoi(show), arreglo_posiciones, max);
 }

@@ -46,53 +46,54 @@ int o_proporcional(double energia_maxima, double energia_material)
 
 void *trabajo_hebra(void *estructura)
 {
-
-    Celda *arreglo_ataque = (Celda *)malloc(sizeof(Celda) * 100);
-
     argumentos *args = (argumentos *)estructura;
     pthread_mutex_t *semaforo_lectura = args->read;
     pthread_mutex_t *semaforo_escritura = args->write;
-    double *arreglo_celdas_a_modifiar = args->arreglo_celdas_a_modifiar;
+    Celda *arreglo_ataque = (Celda *)malloc(sizeof(Celda) * 100);
+
+    // Insertar semaforo
+    pthread_mutex_lock(semaforo_lectura);
+    if (final_archivo == 1)
+    {
+        pthread_mutex_unlock(semaforo_lectura);
+        pthread_exit(NULL);
+    }
+
     FILE *file = args->file;
     int contador = args->contador;
     int chunks = args->chunks;
     int N = args->largo_celdas;
-    int final_archivo = 0;
 
-    // Se imprimen las variables que se puedan imprimir para saber que se estan pasando bien
-    printf("contador: %d\n", contador);
-    printf("chunks: %d\n", chunks);
-    printf("N: %d\n", N);
+    // Se comienza a leer el archivo desde la linea que se quedo
+    comenzarDesdeLinea(file, contador);
 
-    // while (final_archivo == 0)
-    // {
+    arreglo_ataque = leer_archivo(file, chunks);
+    contador += chunks;
 
-    //     // Insertar semaforo
-    //     pthread_mutex_lock(semaforo_lectura);
+    // Guarda el valor de contador en la estructura
+    args->contador = contador;
 
-    //     // Agregar semaforo para leer
-    //     arreglo_ataque = leer_archivo(file, contador, chunks);
+    pthread_mutex_unlock(semaforo_lectura);
 
-    //     contador += chunks;
+    pthread_mutex_lock(semaforo_escritura);
+    double *arreglo_celdas_a_modifiar = args->arreglo_celdas_a_modifiar;
+    // Agregar semaforo para escribir
+    //  Se comienza a hacer se hace dos ciclos for se recorre todo el arreglo aplicandole la ecuación.
+    //  Se guarda el resultado en arreglo de posiciones.
+    for (int i = 0; i < arreglo_ataque[0].largo_del_arreglo; i++)
+    {
+        int array_length = N; // Suponiendo que N es un puntero a la longitud del arreglo
+        for (int j = 0; j < array_length; j++)
+        {
+            arreglo_celdas_a_modifiar[j] = suma_formula(arreglo_ataque[i].posicion, arreglo_ataque[i].valor, j, arreglo_celdas_a_modifiar[j], array_length);
+        }
+    }
+    // Se guarda arreglo de posiciones en la estructura
+    args->arreglo_celdas_a_modifiar = arreglo_celdas_a_modifiar;
 
-    //     pthread_mutex_unlock(semaforo_lectura);
+    pthread_mutex_unlock(semaforo_escritura);
+    // liberar semaforo para escribir
+    // Se cierra while
 
-    //     pthread_mutex_lock(semaforo_escritura);
-    //     // Agregar semaforo para escribir
-    //     //  Se comienza a hacer se hace dos ciclos for se recorre todo el arreglo aplicandole la ecuación.
-    //     //  Se guarda el resultado en arreglo de posiciones.
-    //     for (int i = 0; i < arreglo_ataque[0].largo_del_arreglo; i++)
-    //     {
-    //         int array_length = N; // Suponiendo que N es un puntero a la longitud del arreglo
-    //         for (int j = 0; j < array_length; j++)
-    //         {
-    //             arreglo_celdas_a_modifiar[j] = suma_formula(arreglo_ataque[i].posicion, arreglo_ataque[i].valor, j, arreglo_celdas_a_modifiar[j], array_length);
-    //         }
-    //     }
-
-    //     pthread_mutex_unlock(semaforo_escritura);
-    //     // liberar semaforo para escribir
-    //     // Se cierra while
-    // }
     pthread_exit(NULL);
 }

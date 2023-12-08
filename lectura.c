@@ -5,11 +5,30 @@
 #include "globals.h"
 #include "celda.h"
 
+// Función para comenzar a leer desde una línea específica
+void comenzarDesdeLinea(FILE *archivo, int numeroLinea)
+{
+    // Asumiendo que cada línea tiene un máximo de 4096 caracteres
+    char buffer[4096];
+
+    // Mover el puntero de archivo al principio del archivo
+    fseek(archivo, 0, SEEK_SET);
+
+    // Leer y descartar las primeras "numeroLinea - 1" líneas
+    for (int i = 1; i < numeroLinea; ++i)
+    {
+        if (fgets(buffer, sizeof(buffer), archivo) == NULL)
+        {
+            break;
+        }
+    }
+}
+
 // Entrada: nombre del archivo siendo un char.
 // Salida: arreglo de celdas (estructura).
 // Descripción: Esta función tiene el propósito de leer el archivo de entrada
 // y retornar un array de celdas.
-Celda *leer_archivo(FILE *archivo, int counter, int chucks)
+Celda *leer_archivo(FILE *archivo, int chucks)
 {
     // Se inicializan las variables
     Celda *arreglo;
@@ -41,13 +60,14 @@ Celda *leer_archivo(FILE *archivo, int counter, int chucks)
         arreglo[i].valor = segundo_numero;
         arreglo[i].largo_del_arreglo = tamaño_array;
         i++;
-        counter++;
     }
+    arreglo[0].largo_del_arreglo = i;
 
     // Si llegó al final del archivo
     if (feof(archivo))
     {
-        int final_archivo = 1;
+        final_archivo = 1;
+        printf("final_archivo: %d\n", final_archivo);
     }
 
     return arreglo;
