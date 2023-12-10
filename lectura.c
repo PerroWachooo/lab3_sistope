@@ -67,7 +67,6 @@ Celda *leer_archivo(FILE *archivo, int chucks)
     if (feof(archivo))
     {
         final_archivo = 1;
-        printf("final_archivo: %d\n", final_archivo);
     }
 
     return arreglo;

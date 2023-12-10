@@ -187,9 +187,6 @@ int main(int argc, char *argv[])
 
     close(fileno(archivo));
 
-    // Se  imprime mensaje de termino
-    printf("Termino de ejecutarse las hebras\n");
-
     // Encuentra el valor maximo del arreglo_posiciones
     double max = 0;
     int posicion_max = 0;
